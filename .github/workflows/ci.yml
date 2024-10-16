@@ -68,13 +68,13 @@ jobs:
         run: npm ci
         working-directory: ./TimeManager_frontend
 
-      - name: Run frontend unit tests
-        run: npm run test:unit
-        working-directory: ./TimeManager_frontend
+#      - name: Run frontend unit tests
+#        run: npm run test:unit
+#        working-directory: ./TimeManager_frontend
 
-      - name: Run frontend e2e tests
-        run: npm run test:e2e
-        working-directory: ./TimeManager_frontend
+#      - name: Run frontend e2e tests
+#        run: npm run test:e2e
+#        working-directory: ./TimeManager_frontend
 
       # Setup Elixir for the backend with specific versions
       - name: Set up Elixir

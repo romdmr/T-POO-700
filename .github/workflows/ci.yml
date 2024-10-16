@@ -16,7 +16,7 @@ jobs:
 
     services:
       db:
-        image: postgres:13
+        image: postgres:17
         env:
           POSTGRES_USER: ${{ secrets.PGUSER }}
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
@@ -75,7 +75,7 @@ jobs:
 
       # Setup Elixir for the backend with specific versions
       - name: Set up Elixir
-        uses: actions/setup-elixir@v2
+        uses: actions/setup-elixir@v1
         with:
           elixir-version: '1.17.3'
           otp-version: '27.1.1'

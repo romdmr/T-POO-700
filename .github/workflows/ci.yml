@@ -1,0 +1,97 @@
+name: CI Time Manager
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:13
+        env:
+          POSTGRES_USER: ${{ secrets.PGUSER }}
+          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
+          POSTGRES_DB: ${{ secrets.PGDATABASE }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Load environment variables from .env
+        run: |
+          cp .env .env.github
+          set -a
+          source .env.github
+          set +a
+
+      # Cache for Node.js (Vue.js Frontend)
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Cache for Elixir dependencies (Phoenix Backend)
+      - name: Cache Elixir dependencies
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-elixir-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-elixir-
+
+      # Setup Node.js for the frontend
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: ./TimeManager_frontend
+
+      # Run frontend tests
+      - name: Run frontend tests
+        run: npm run test
+        working-directory: ./TimeManager_frontend
+
+      # Setup Elixir for the backend with specific versions
+      - name: Set up Elixir
+        uses: actions/setup-elixir@v1
+        with:
+          elixir-version: '1.17.3'
+          otp-version: '27.1.1'
+
+      - name: Install Elixir dependencies
+        run: mix deps.get
+        working-directory: ./TimeManager_backend
+
+      - name: Compile backend code
+        run: mix compile
+        working-directory: ./TimeManager_backend
+
+      - name: Run backend tests
+        run: mix test
+        working-directory: ./TimeManager_backend
+
+      # Docker setup (if needed)
+      - name: Build Docker images
+        run: docker-compose build

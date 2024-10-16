@@ -16,7 +16,7 @@ jobs:
 
     services:
       db:
-        image: postgres:13
+        image: postgres:17
         env:
           POSTGRES_USER: ${{ secrets.PGUSER }}
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}

@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Configuration globale */
+html,
+body {
+    height: 100vh;
+    overflow-x: hidden;
+    /* Pas de scroll horizontal */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    /* Choisis ta police si nécessaire */
+    background-color: #f3f4f6;
+    /* Couleur de fond par défaut */
+}
+
+/* Tailwind global reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}

@@ -1,0 +1,47 @@
+services:
+  db_dev:
+    image: postgres:17
+    env_file:
+      - .env
+    volumes:
+      - pg_data_dev:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - timemanager_network
+
+  api:
+    build:
+      context: ./TimeManager_backend
+      dockerfile: Dockerfile
+    command: /bin/sh entrypoint.sh
+    volumes:
+      - ./TimeManager_backend:/app
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: "ecto://postgres:postgres@db_dev/timemanager_dev"
+    depends_on:
+      - db_dev
+    networks:
+      - timemanager_network
+
+  interface:
+    build:
+      context: ./TimeManager_frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./TimeManager_frontend:/app
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    networks:
+      - timemanager_network
+
+volumes:
+  pg_data_dev: {}
+
+networks:
+  timemanager_network:
+    driver: bridge

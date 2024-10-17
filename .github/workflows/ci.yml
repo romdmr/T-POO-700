@@ -78,7 +78,7 @@ jobs:
 
       # Setup Elixir for the backend with specific versions
       - name: Set up Elixir
-        uses: actions/setup-elixir@v1
+        uses: erlef/setup-elixir@v2
         with:
           elixir-version: 1.17.3
           otp-version: 27.1.1

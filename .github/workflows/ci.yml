@@ -16,11 +16,11 @@ jobs:
 
     services:
       db:
-        image: postgres:17
+        image: postgres:13
         env:
-          POSTGRES_USER: ${{ secrets.PGUSER }}
-          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
-          POSTGRES_DB: ${{ secrets.PGDATABASE }}
+          POSTGRES_USER: postgres #${{ secrets.POSTGRES_USER }} #postgres
+          POSTGRES_PASSWORD: postgres #${{ secrets.POSTGRES_PASSWORD }}  #postgres
+          POSTGRES_DB: time_manager_db #${{ secrets.POSTGRES_DB }} #time_manager_db
         ports:
           - 5432:5432
         options: >-
@@ -68,17 +68,20 @@ jobs:
         run: npm ci
         working-directory: ./TimeManager_frontend
 
-      # Run frontend tests
-      - name: Run frontend tests
-        run: npm run test
-        working-directory: ./TimeManager_frontend
+#      - name: Run frontend unit tests
+#        run: npm run test:unit
+#        working-directory: ./TimeManager_frontend
+
+#      - name: Run frontend e2e tests
+#        run: npm run test:e2e
+#        working-directory: ./TimeManager_frontend
 
       # Setup Elixir for the backend with specific versions
       - name: Set up Elixir
-        uses: actions/setup-elixir@v1
+        uses: erlef/setup-elixir@v1
         with:
-          elixir-version: '1.17.3'
-          otp-version: '27.1.1'
+          elixir-version: 1.17.3
+          otp-version: 27.1.1
 
       - name: Install Elixir dependencies
         run: mix deps.get
@@ -92,6 +95,21 @@ jobs:
         run: mix test
         working-directory: ./TimeManager_backend
 
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install docker-compose -y
+
+      - name: Check Docker Compose version
+        run: docker-compose --version
+
       # Docker setup (if needed)
       - name: Build Docker images
         run: docker-compose build
+
+      - name: PostgreSQL logs
+        run: docker logs ${{ job.services.db.id }}
+

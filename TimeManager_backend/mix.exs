@@ -46,6 +46,7 @@ defmodule TimeManagerBackend.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:cors_plug, "~> 3.0"},
+      {:prom_ex, "~> 1.10.0"},
     ]
   end
 

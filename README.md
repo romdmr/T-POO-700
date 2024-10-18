@@ -1,2 +1,1 @@
-# T-POO-700
-TimeManager for mirroring.
+#TIME MANAGER PROJECT

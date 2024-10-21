@@ -38,9 +38,32 @@ services:
       - api
     networks:
       - timemanager_network
+    
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - timemanager_network
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - timemanager_network
+
 
 volumes:
   pg_data_dev: {}
+  grafana-storage: {}
 
 networks:
   timemanager_network:
